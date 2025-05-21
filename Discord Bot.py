@@ -42,6 +42,7 @@ async def play(ctx, url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'quiet': True,
+        'cookiefile': 'cookies.txt',
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
