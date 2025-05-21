@@ -20,7 +20,7 @@ def phonetic(message, phonetics, soundList):
     return final
 
 def wordDict(phonetics):
-    file = open("/Users/mtmcr/Documents/Python/Discord/Dictionary.txt", "r")
+    file = open("/Users/mtmcr/Documents/Python/Phonetic-Discord-Bot/Dictionary.txt", "r")
     for line in file:
         sounds = re.findall("\\S+", line)
         key = sounds[0]
