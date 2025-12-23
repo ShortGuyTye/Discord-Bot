@@ -4,10 +4,11 @@ Discord bot that was originally made to translate messages sent in a server into
 Dictionary used was provided by the Carnegie Mellon University Pronouncing Dictionary, http://www.speech.cs.cmu.edu/cgi-bin/cmudict
 
 Need to install:
-pip install py-cord
+pip install -U discord.py
 pip install yt_dlp
 pip install python-dotenv
 pip install PyNaCl
+pip install obsws-python
 
 ffmpeg: Extract the folder and add the bin directory to your System Environment Variables → PATH. https://www.gyan.dev/ffmpeg/builds/
 
