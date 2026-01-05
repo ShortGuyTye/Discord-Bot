@@ -48,6 +48,18 @@ async def play_next(guild_id, text_channel):
     vc.play(source, after=after_play)
     await text_channel.send(f"Now playing: **{title}**")
 
+async def ytdlp_extract(url, ydl_opts):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, lambda: yt_dlp.YoutubeDL(ydl_opts).extract_info(url, download=False))
+
+def fix_url(url):
+    # convert any watch?v= URL to youtu.be short URL
+    if "youtube.com/watch" in url:
+        video_id = url.split("v=")[1].split("&")[0]
+        return f"https://youtu.be/{video_id}"
+    return url
+
+
 # ---------------- Voice Commands ----------------
 @bot.tree.command(name="join", description="Join a voice chat")
 async def join(interaction: discord.Interaction):
@@ -60,6 +72,9 @@ async def join(interaction: discord.Interaction):
     channel = interaction.user.voice.channel
     await channel.connect()
     await interaction.response.send_message(f"Joined {channel.name}")
+    vc = interaction.guild.voice_client
+    if not vc.is_playing():
+        await play_next(interaction.guild.id, interaction.channel)
 
 @bot.tree.command(name="leave", description="Leave the voice chat")
 async def leave(interaction: discord.Interaction):
@@ -74,6 +89,7 @@ async def leave(interaction: discord.Interaction):
 @bot.tree.command(name="play", description="Play audio from YouTube")
 @app_commands.describe(url="YouTube URL or playlist")
 async def play(interaction: discord.Interaction, url: str):
+    fix_url(url)
     vc = interaction.guild.voice_client
     if not vc:
         await interaction.response.send_message("Not connected to a voice channel", ephemeral=True)
@@ -83,17 +99,18 @@ async def play(interaction: discord.Interaction, url: str):
     ydl_opts = {
         "format": "bestaudio[ext=webm]/bestaudio[ext=m4a]/bestaudio/best",
         "quiet": True,
+        "no_warnings": True,
         "ignoreerrors": True,
         "nocheckcertificate": True,
         "source_address": "0.0.0.0",
         "extract_flat": False,
         "skip_download": True,
-        "noplaylist": False
+        "noplaylist": False,
+        "extract_flat": False
     }
 
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=False)
+        info = await ytdlp_extract(url, ydl_opts)
     except Exception as e:
         await interaction.followup.send(f"Failed to load audio: {e}")
         return
@@ -110,6 +127,10 @@ async def play(interaction: discord.Interaction, url: str):
 
     if not vc.is_playing():
         await play_next(interaction.guild.id, interaction.channel)
+    else:
+        title = queue[0].get("title", "Unknown")
+        await interaction.channel.send(f"Queued: **{title}**")
+
 
 
 @bot.tree.command(name="stop", description="Stops current track and clears the queue")
@@ -131,6 +152,21 @@ async def skip(interaction: discord.Interaction):
     vc.stop()
     await interaction.response.send_message("Skipped current track")
 
+@bot.tree.command(name="queue", description="Shows current queue")
+async def queue_cmd(interaction: discord.Interaction):
+    queue = get_queue(interaction.guild.id)
+
+    if not queue:
+        await interaction.response.send_message("Queue is empty")
+        return
+
+    lines = []
+    for i, item in enumerate(queue, start=1):
+        title = item.get("title", "Unknown")
+        lines.append(f"{i}. {title}")
+
+    await interaction.response.send_message("\n".join(lines))
+
 # ---------------- Phonetics Commands -----------------
 @bot.tree.command(name="activate", description="activate")
 async def activate(interaction: discord.Interaction):
@@ -144,7 +180,7 @@ async def deactivate(interaction: discord.Interaction):
     is_on = False
     await interaction.response.send_message("WHAT? NO! HOW DID YOU FIND MY ONLY WEAKNESS??")
 
-# ------------------ Explode Command ----------------
+# ------------------ OBS Commands ----------------
 @bot.tree.command(name="explode", description="Blows him up like crazy")
 async def explode(interaction: discord.Interaction):
     obs = ReqClient(
@@ -157,6 +193,32 @@ async def explode(interaction: discord.Interaction):
         action="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART"
     )
     await interaction.response.send_message("Boom Shakalaka")
+
+@bot.tree.command(name="fnaf", description="Scares them up like crazy")
+async def fnaf(interaction: discord.Interaction):
+    obs = ReqClient(
+        host="localhost",
+        port=4455,
+        password="sJXOTyMBZgMZMrFD"
+    )
+    obs.trigger_media_input_action(
+        name="FNAF",
+        action="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART"
+    )
+    await interaction.response.send_message("Gotem")
+
+@bot.tree.command(name="joehendry", description="Joes him up like crazy")
+async def joehendry(interaction: discord.Interaction):
+    obs = ReqClient(
+        host="localhost",
+        port=4455,
+        password="sJXOTyMBZgMZMrFD"
+    )
+    obs.trigger_media_input_action(
+        name="Joe Hendry",
+        action="OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART"
+    )
+    await interaction.response.send_message("**CLAP CLAP**")
 
 # ----------------- Bot Events ----------------
 @bot.event
