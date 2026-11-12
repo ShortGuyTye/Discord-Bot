@@ -10,6 +10,8 @@ pip install python-dotenv
 pip install PyNaCl
 pip install obsws-python
 
+davey==0.1.7
+
 ffmpeg: Extract the folder and add the bin directory to your System Environment Variables → PATH. https://www.gyan.dev/ffmpeg/builds/
 
 You may need to restart in order for things to work
