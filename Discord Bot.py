@@ -273,7 +273,7 @@ async def deactivate(interaction: discord.Interaction):
 @bot.tree.command(name="explode", description="Blows him up like crazy")
 async def explode(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
@@ -286,7 +286,7 @@ async def explode(interaction: discord.Interaction):
 @bot.tree.command(name="fnaf", description="Scares them up like crazy")
 async def fnaf(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
@@ -299,7 +299,7 @@ async def fnaf(interaction: discord.Interaction):
 @bot.tree.command(name="joehendry", description="Joes him up like crazy")
 async def joehendry(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
@@ -312,7 +312,7 @@ async def joehendry(interaction: discord.Interaction):
 @bot.tree.command(name="aang", description="Proves him right like crazy")
 async def aang(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
@@ -325,7 +325,7 @@ async def aang(interaction: discord.Interaction):
 @bot.tree.command(name="rotd", description="___ like crazy")
 async def rotd(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
@@ -338,7 +338,7 @@ async def rotd(interaction: discord.Interaction):
 @bot.tree.command(name="wall", description="Shuts him up like crazy")
 async def wall(interaction: discord.Interaction):
     obs = ReqClient(
-        host="localhost",
+        host=os.getenv("IP"),
         port=4455,
         password=os.getenv("OBS_PASSWORD")
     )
