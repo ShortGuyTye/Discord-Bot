@@ -269,6 +269,12 @@ async def deactivate(interaction: discord.Interaction):
     is_on = False
     await interaction.response.send_message("WHAT? NO! HOW DID YOU FIND MY ONLY WEAKNESS??")
 
+@bot.tree.command(name="erm_actually", description="Wins any argument")
+async def erm_actually(interaction: discord.Interaction):
+    global is_on
+    messages = [message async for message in interaction.channel.history(limit=2)]
+    await interaction.response.send_message(Phonetics.phonetic(messages[0].content, phonetics, soundList))
+
 # ------------------ OBS Commands ----------------
 @bot.tree.command(name="explode", description="Blows him up like crazy")
 async def explode(interaction: discord.Interaction):
